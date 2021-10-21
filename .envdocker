@@ -1,0 +1,4 @@
+GDAL_BIN_DIR=/usr/bin/
+TIPPECANOE_BIN_DIR=/usr/local/bin/
+DATA_DIR=/data
+DOCKER_RUNNING=true

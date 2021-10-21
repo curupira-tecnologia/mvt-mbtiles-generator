@@ -1,0 +1,34 @@
+{
+    "temperatura":{
+        "enable":true,
+        "strategy":"vector-raster-vector",
+        "name":"temperatura",
+        "mainAttr":"vlr_temper",
+        "rebuild":true,
+        "topology":true,
+        "dataSource":{
+            "type":"postgres",
+            "connection":"postgresql://postgres:*gs51&63Ks6@200.130.15.165:5532/pangea",
+            "schema":"layers_published",
+            "tableName":"tb_temperatura",
+            "geoColumn":"geom",
+            "idColumn":"",
+            "propertiesColumns":["vlr_temper"]
+        }
+    },
+    "uso_cobertura_terra":{
+        "enable":true,
+        "strategy":"vector-raster-vector",
+        "name":"uso_cobertura_terra",
+        "mainAttr":"vlr_classe",
+        "dataSource":{
+            "type":"postgres",
+            "connection":"postgresql://postgres:r00t05@localhost:5432/pangea2",
+            "schema":"layers_published",
+            "tableName":"tb_uso_e_cobertura_da_terra",
+            "geoColumn":"geom",
+            "idColumn":"",
+            "propertiesColumns":["vlr_classe"]
+        }
+    }
+}

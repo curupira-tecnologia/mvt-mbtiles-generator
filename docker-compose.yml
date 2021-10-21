@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  mvt_generator:
+    build: ./
+    container_name: mvt_generator
+    env_file: .envdocker
+    volumes:
+      - ./data:/data
+      - ./src:/app/src
+      - ./config.json:/app/config.json
+    ports:
+    - 8383:8080
+    command: tail -f /dev/null 
+
+
+
+  
