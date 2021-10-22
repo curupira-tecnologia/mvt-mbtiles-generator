@@ -1,13 +1,21 @@
-{
-    "temperatura":{
-        "enable":true,
-        "strategy":"vector-raster-vector",
+[
+    {
         "name":"temperatura",
+        "enable":true,
+        "strategy":[
+            { "driver":"vector-raster-vector-tile",
+               "options":{
+                    "optimizeOriginal":false,
+                    "topology":false,
+                    "attributeForReference":"vlr_temper",
+                    "maintainAllAtributes":false
+               }
+            }
+        ],
         "mainAttr":"vlr_temper",
-        "rebuild":true,
-        "topology":true,
+        "rebuild":false,
         "dataSource":{
-            "type":"postgres",
+            "type":"postgis",
             "connection":"postgresql://postgres:*gs51&63Ks6@200.130.15.165:5532/pangea",
             "schema":"layers_published",
             "tableName":"tb_temperatura",
@@ -16,11 +24,23 @@
             "propertiesColumns":["vlr_temper"]
         }
     },
-    "uso_cobertura_terra":{
-        "enable":true,
-        "strategy":"vector-raster-vector",
+    {
         "name":"uso_cobertura_terra",
+        "strategy":[
+            { "driver":"vector-raster-vector-tile",
+               "options":{
+                    "optimizeOriginal":false,
+                    "topology":false,
+                    "attributeForReference":"vlr_classe",
+                    "maintainAllAtributes":false
+               }
+            }
+        ],
+        "enable":false,
         "mainAttr":"vlr_classe",
+        "rebuild":false,
+        "topology":false,
+        "optimizeOriginal":false,
         "dataSource":{
             "type":"postgres",
             "connection":"postgresql://postgres:r00t05@localhost:5432/pangea2",
@@ -31,4 +51,4 @@
             "propertiesColumns":["vlr_classe"]
         }
     }
-}
+]

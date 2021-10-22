@@ -6,7 +6,7 @@ services:
     container_name: mvt_generator
     env_file: .envdocker
     volumes:
-      - ./data:/data
+      - ./data:/data:cached
       - ./src:/app/src
       - ./config.json:/app/config.json
     ports:

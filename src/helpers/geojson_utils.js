@@ -11,6 +11,7 @@ const lodash = require('lodash');
 // var es = require('event-stream')
 const exec = require('./execCommand');
 const file_exists = require('../helpers/file_exists');
+const detourStream = require('detour-stream')
 
 module.exports = class geojsonUtil {
 
@@ -181,16 +182,21 @@ module.exports = class geojsonUtil {
     }
 
 
+    static async mergeFiles(inputFiles=[], outputFile, RFC8142 = false ) {
+        return geojsonUtil.joinFiles(inputFiles,outputFile, RFC8142 )
+    }
 
-    static async joinFiles(inputFiles=[], outputFile ) {
+    // RFC8142 - this especification put each feature in a new line. usefull for parallel esp in
+    static async joinFiles(inputFiles=[], outputFile,  RFC8142 = false  ) {
 
         return new Promise((resolve, reject) => {
             console.log('           Start streaming files')
             const tempFile = outputFile+'_tmp'
+            if(file_exists(tempFile)) fs.rmSync(tempFile)
             const streamOut = fs.createWriteStream(tempFile);
             
             // out features adding featuresCollection in output
-            const outFeaturesCollectionStream = JSONStream.stringify();
+            inputFiles = Array.isArray(inputFiles) ? inputFiles : [inputFiles];
             
             let streams = inputFiles.map(   file=>
                 {
@@ -204,8 +210,7 @@ module.exports = class geojsonUtil {
             if(streams.length === 0) resolve(null)
 
             let count = 0
-            // use indicator
-            // process.stdout.write("hello: ");
+
             let jsonstream = JSONStream.parse('features.*')
             jsonstream.on('data',e=> {
                 count++
@@ -213,15 +218,23 @@ module.exports = class geojsonUtil {
             })
             jsonstream.on('error',e=>console.error('Error in geojsonStream.parse',e))
 
+
+            let outFeaturesCollectionStream
+            if(RFC8142){
+                outFeaturesCollectionStream = JSONStream.stringify('',',\n','');
+            }else{
+                outFeaturesCollectionStream = JSONStream.stringify('{ \n  "type":"FeatureCollection",\n  "features":[\n    ', ',\n    ','\n  ]\n}')
+            }
+
             new MultiStream(streams)
             .pipe(jsonstream)
-            // .pipe(outFeaturesCollectionStream)
-            .pipe(geojsonStream.stringify())
+            .pipe(outFeaturesCollectionStream)
             .pipe(streamOut)
 
             streamOut.on('data',e=>console.log(e.toString()))
             streamOut.on('close',e=>{
                 fs.cpSync(tempFile, outputFile)
+                fs.rmSync(tempFile)
                 console.log('finish streamOut')
                 resolve(true)
             })
